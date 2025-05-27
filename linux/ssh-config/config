@@ -1,0 +1,6 @@
+Host [hostname-alias]
+	User [user]
+	Hostname [hostname]
+	IdentityFile [keyfile]
+	IdentitiesOnly yes 
+	AddKeysToAgent yes
