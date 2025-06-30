@@ -1,0 +1,17 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Welcome to Taskfile. Using --list or --list-all to show all commands
+
+includes:
+  rhash: ./Taskfile/Taskfile-rhash.yml
+  rhash-loop: ./Taskfile/Taskfile-rhash-loop_{{OS}}.yml
+
+tasks:
+  default:
+    desc: "{{.GREETING}}"
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true

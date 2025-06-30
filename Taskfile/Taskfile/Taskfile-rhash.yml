@@ -1,0 +1,47 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: RHASH simplify, use -l, --list or --list-all to show all available commands
+  ACCEPT: .mkv,.avi,.mp4,.m4v
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  create:
+    desc: create checksum.sfv file using CRC32 for all accepted extensions
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - rhash -rCP -o checksum.sfv --accept="{{.ACCEPT}}" .
+
+  check:
+    aliases: [verify]
+    desc: verify checksum based on file checksum.sfv
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - rhash -rcP --ignore-missing checksum.sfv
+
+  update:
+    desc: update checksum for new files based on file checksum.sfv
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - rhash -rP --update checksum.sfv --accept="{{.ACCEPT}}" .
+      - echo "Finished."
+
+
+  unverified:
+    desc: show all unverified/new files not available on checksum.sfv
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - rhash --recursive --unverified checksum.sfv --accept="{{.ACCEPT}}" .
+      - echo "Finished."
+
+  missing:
+    desc: show all missing files currently exist on checksum.sfv
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - rhash --recursive --missing checksum.sfv --accept="{{.ACCEPT}}" .
