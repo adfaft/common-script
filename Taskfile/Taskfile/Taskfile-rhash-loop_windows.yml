@@ -1,0 +1,21 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Taskfile RHASH Directory Loop for Windows platform
+  ACCEPT: .mkv,.avi,.mp4,.m4v
+
+tasks:
+  default:
+    desc: "{{.GREETING}}"
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  create:
+    desc: Create or Update checksum.sfv for every directory in this current working directory, excluding prefix "_"
+    platforms: [windows]
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - '{{toSlash .TASKFILE_DIR}}/cmd-windows/rhash-create-dirloop.bat'
