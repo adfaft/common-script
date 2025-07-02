@@ -5,6 +5,7 @@ version: '3'
 vars:
   GREETING: Taskfile RHASH Directory Loop for Windows platform
   ACCEPT: .mkv,.avi,.mp4,.m4v
+  
 
 tasks:
   default:
@@ -18,4 +19,4 @@ tasks:
     platforms: [windows]
     dir: '{{.USER_WORKING_DIR}}'
     cmds:
-      - '{{toSlash .TASKFILE_DIR}}/cmd-windows/rhash-create-dirloop.bat'
+      - '{{toSlash .TASKFILE_DIR}}/cmd-windows/rhash-create-dirloop.bat ACCEPT={{.ACCEPT}}'

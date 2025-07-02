@@ -2,9 +2,12 @@
 
 version: '3'
 
+env:
+  ACCEPT: .mkv,.avi,.mp4,.m4v
+
 vars:
   GREETING: RHASH simplify, use -l, --list or --list-all to show all available commands
-  ACCEPT: .mkv,.avi,.mp4,.m4v
+  
 
 tasks:
   default:
