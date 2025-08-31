@@ -3,34 +3,34 @@ Setlocal EnableExtensions DisableDelayedExpansion
 
 FOR /D %%D in (*) DO (
 
-    cd "%%D"
+cd "%%D"
 
-    echo:
-    REM cd
-    echo Dir: '%%~D'
+echo:
+REM cd
+echo Dir: '%%~D'
 
-    Setlocal EnableDelayedExpansion
+Setlocal EnableDelayedExpansion
 
-    SET FIRSTCHAR=%%D
-    SET FIRSTCHAR=!FIRSTCHAR:~0,1!
+SET FIRSTCHAR=%%D
+SET FIRSTCHAR=!FIRSTCHAR:~0,1!
 
-    IF NOT "!FIRSTCHAR!"=="_" (
+IF NOT "!FIRSTCHAR!"=="_" OR NOT "!FIRSTCHAR!"=="." (
 
-        IF exist "checksum.sfv" (
-            REM echo "will update"
-            task -g rhash:update
-        ) else (
-            REM echo "will create"
-            task -g rhash:create
-        )
+IF exist "checksum.sfv" (
+REM echo "will update"
+task -g rhash:update %*
+) else (
+REM echo "will create"
+task -g rhash:create %*
+)
 
-    ) else (
-        echo ignored.
-    )
+) else (
+echo ignored.
+)
 
-    Endlocal 
+Endlocal 
 
-    cd ..
+cd ..
 
 
 )

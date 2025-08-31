@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# reference: 
+# https://stackoverflow.com/questions/24001587/you-are-on-a-branch-yet-to-be-born
+# https://gist.github.com/nonbeing/f3441c96d8577a734fa240039b7113db
+
+#for debugging
+#set -ex
+
+# the work tree, where the checkout/deploy should happen
+TARGET="/home/webuser/deploy-dir"
+
+# the location of the .git directory
+GIT_DIR="/home/webuser/project.git"
+
+
+BRANCH="main"
+
+while read oldrev newrev ref
+do
+        # only checking out the master (or whatever branch you would like to deploy)
+        if [ "$ref" = "refs/heads/$BRANCH" ];
+        then
+                echo "Ref $ref received. Deploying ${BRANCH} branch on server..."
+                git --work-tree="${TARGET}" --git-dir="${GIT_DIR}" checkout -f ${BRANCH}
+        else
+                echo "Ref $ref received. Doing nothing: only the ${BRANCH} branch may be deployed on this server."
+        fi
+done
