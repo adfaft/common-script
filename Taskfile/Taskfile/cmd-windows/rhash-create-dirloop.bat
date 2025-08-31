@@ -14,7 +14,7 @@ Setlocal EnableDelayedExpansion
 SET FIRSTCHAR=%%D
 SET FIRSTCHAR=!FIRSTCHAR:~0,1!
 
-IF NOT "!FIRSTCHAR!"=="_" (
+IF NOT "!FIRSTCHAR!"=="_" OR NOT "!FIRSTCHAR!"=="." (
 
 IF exist "checksum.sfv" (
 REM echo "will update"

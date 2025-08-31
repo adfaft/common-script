@@ -2,49 +2,58 @@
 
 version: '3'
 
-env:
-  ACCEPT: .mkv,.avi,.mp4,.m4v
-
 vars:
-  GREETING: RHASH simplify, use -l, --list or --list-all to show all available commands
-  
+  FILENAME: "checksum.sfv"
 
 tasks:
   default:
     cmds:
-      - echo "{{.GREETING}}"
+      - echo "RHASH simplify, use -l, -a, --list or --list-all to show all available commands. Use --summary for examples."
+    summary: |
+      RHash all files in current directory recursively, default as 
+        - SHA256 algorithm 
+        - output filename "checksum.sfv"
+        - format "simple" (use --sfv for sfv format)
+
+      Example:
+      $ task rhash:create
+      
+      allowed only for some format
+      $ task rhash:create -- --accept=".mp4,.avi,.mkv,.m4v"
+      
+      use sfv format which includes filelist, time modified and size in header
+      $ task rhash:create FILENAME=output.sfv -- --sfv
     silent: true
 
   create:
-    desc: create checksum.sfv file using CRC32 for all accepted extensions
+    desc: create "{{.FILENAME}}" file using SHA256 for all accepted extensions
     dir: '{{.USER_WORKING_DIR}}'
     cmds:
-      - rhash -rCP -o checksum.sfv --accept="{{.ACCEPT}}" .
+      - rhash -rP --sha256 -o "{{.FILENAME}}" {{.CLI_ARGS}} .
 
   check:
     aliases: [verify]
-    desc: verify checksum based on file checksum.sfv
+    desc: verify checksum based on file "{{.FILENAME}}"
     dir: '{{.USER_WORKING_DIR}}'
     cmds:
-      - rhash -rcP --ignore-missing checksum.sfv
+      - rhash -rcP --ignore-missing "{{.FILENAME}}"
 
   update:
-    desc: update checksum for new files based on file checksum.sfv
+    desc: update checksum for new files based on file "{{.FILENAME}}"
     dir: '{{.USER_WORKING_DIR}}'
     cmds:
-      - rhash -rP --update checksum.sfv --accept="{{.ACCEPT}}" .
-      - echo "Finished."
-
+      - rhash -rP --sha256 --update="{{.FILENAME}}" {{.CLI_ARGS}}  .      
 
   unverified:
-    desc: show all unverified/new files not available on checksum.sfv
+    desc: show all unverified/new files not available on "{{.FILENAME}}"
     dir: '{{.USER_WORKING_DIR}}'
     cmds:
-      - rhash --recursive --unverified checksum.sfv --accept="{{.ACCEPT}}" .
-      - echo "Finished."
+      - rhash --recursive --unverified="{{.FILENAME}}" .      
 
   missing:
-    desc: show all missing files currently exist on checksum.sfv
+    desc: show all missing files currently exist on "{{.FILENAME}}"
     dir: '{{.USER_WORKING_DIR}}'
-    cmds:
-      - rhash --recursive --missing checksum.sfv --accept="{{.ACCEPT}}" .
+    cmds:      
+      - cmd: rhash --recursive --missing="{{.FILENAME}}" .
+        ignore_error: true
+      

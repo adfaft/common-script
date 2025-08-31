@@ -1,0 +1,47 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  FILENAME: "checksum.sfv"
+
+tasks:
+  default:
+    vars: 
+      GREETING: "RHASH EACH Directories in current directory with looping"
+    desc: "{{.GREETING}}"
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  create:
+    vars:
+      DIRS:
+        sh: find . -maxdepth 1 \( ! -name '.*' ! -name '_*' \) -type d
+        # for windows, can be 
+        # for /d %%d in (.) do @if not "%%~nd"=="" if not "%%~nd"=="_*" if not "%%~nd"=="." if not "%%~nd"==".." echo %%d
+      FILENAME: '{{.FILENAME}}'
+    desc: create "{{.FILENAME}}" file using SHA256 for all accepted extensions. Excluding prefix "." / "_"    
+    summary: |
+      RHash all files in for EACH FOLDERS in current directory recursively, default as 
+        - SHA256 algorithm 
+        - output filename "checksum.sfv"
+        - format "simple" (use --sfv for sfv format)
+
+      excluding folder with prefix "." or "_"
+      Example:
+      $ task rhash-dirs:create
+      
+      allowed only for some format
+      $ task rhash-dirs:create -- --accept=".mp4,.avi,.mkv,.m4v"
+      
+      use sfv format which includes filelist, time modified and size in header
+      $ task rhash-dirs:create FILENAME=output.sfv -- --sfv
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      # - cmd: '{{toSlash .TASKFILE_DIR}}/cmd-windows/rhash-create-dirloop.bat ACCEPT={{.ACCEPT}}'
+      #   platforms: [windows]      
+        - for: { var: DIRS, split: "\n" }
+          cmd: cd "{{.ITEM}}"; task -g rhash:create FILENAME="{{.FILENAME}}" -- {{.CLI_ARGS}}; cd ..;
+        
+    

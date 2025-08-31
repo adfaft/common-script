@@ -32,7 +32,7 @@ check:
 
 update:
 	@echo "\n------ update : $(hashfile) ------"
-	rhash -rP --update $(hashfile) --accept=$(extension) $(directory)
+	rhash -rCP --update $(hashfile) --accept=$(extension) $(directory)
 .PHONY: update
 
 unverified:

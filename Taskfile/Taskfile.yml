@@ -2,15 +2,14 @@
 
 version: '3'
 
-vars:
-  GREETING: Welcome to Taskfile. Using --list or --list-all to show all commands
-
 includes:
   rhash: ./Taskfile/Taskfile-rhash.yml
-  rhash-loop: ./Taskfile/Taskfile-rhash-loop_{{OS}}.yml
+  rhash-dirs: ./Taskfile/Taskfile-rhash-dirs_{{OS}}.yml
 
 tasks:
   default:
+    vars: 
+      GREETING: "Welcome to Taskfile. Use -l, -a, --list or --list-all to show all commands"
     desc: "{{.GREETING}}"
     cmds:
       - echo "{{.GREETING}}"
