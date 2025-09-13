@@ -1,0 +1,99 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  USENET_BLOCK_SIZE: 307200
+
+tasks:
+  default:
+    vars: 
+      GREETING: "Par2 EACH Directories (1 level) in current directory with looping"
+    desc: "{{.GREETING}}"
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  create:
+    vars:
+      DIRS:
+        sh: find . -maxdepth 1 \( ! -name '.*' ! -name '_*' \) -type d
+        # for windows, can be 
+        # for /d %%d in (.) do @if not "%%~nd"=="" if not "%%~nd"=="_*" if not "%%~nd"=="." if not "%%~nd"==".." echo %%d
+      USENET_BLOCK_SIZE: '{{.USENET_BLOCK_SIZE}}'
+    desc: for each directory (1 level), create [folder].par for all files in this directory recursively
+    summary: |
+      Par2 using Par2cmdline-turbo for all files in current directory
+      ref: https://github.com/animetosho/par2cmdline-turbo
+
+      Default for Create:   
+        - create checksum {dirname}-par2.sfv
+        - `-R` recursively
+        - `-r15` for 15% recovery
+        - outout as {dirname}.par2
+
+      Installation: include binary par2cmdline-turbo file path in bashrc
+
+      Example:
+      $ task par2-dirs:create
+      $ task par2-dirs:create-s300kb or task par2-dirs:create-usenet
+      $ task par2-dirs:create-s2mb
+      $ task par2:check or task par2:verify
+      $ task par2:restore
+
+      
+      create with block size of 300kb (usenet)
+      $ task par2:create -- --s307200
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - for: { var: DIRS, split: "\n" }
+        cmd: cd "{{.ITEM}}"; task -g par2:create USENET_BLOCK_SIZE="{{.USENET_BLOCK_SIZE}}" -- {{.CLI_ARGS}} ; cd .. ;
+
+
+  create-s300kb:
+    aliases: [create-usenet]
+    desc: create [folder].par for all files in this directory recursively, with blocksize 300KB
+    vars:
+      DIRS:
+        sh: find . -maxdepth 1 \( ! -name '.*' ! -name '_*' \) -type d
+      USENET_BLOCK_SIZE: '{{.USENET_BLOCK_SIZE}}'
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - for: { var: DIRS, split: "\n" }
+        cmd: cd "{{.ITEM}}"; task -g par2:create-s300kb USENET_BLOCK_SIZE="{{.USENET_BLOCK_SIZE}}"; cd ..;
+
+  create-s2mb:
+    aliases: [create-usenet]
+    desc: create [folder].par for all files in this directory recursively, with blocksize 2MB
+    vars:
+      DIRS:
+        sh: find . -maxdepth 1 \( ! -name '.*' ! -name '_*' \) -type d
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - for: { var: DIRS, split: "\n" }
+        cmd: cd "{{.ITEM}}"; task -g par2:create-s2mb; cd ..;
+
+
+  check:
+    aliases: [verify]
+    desc: verify par2 file for current directory, using filename for "{dirname}.par2"
+    dir: '{{.USER_WORKING_DIR}}'
+    vars:
+      DIRS:
+        sh: find . -maxdepth 1 \( ! -name '.*' ! -name '_*' \) -type d
+    cmds:
+      - for: { var: DIRS, split: "\n" }
+        cmd: cd "{{.ITEM}}"; task -g par2:check; cd ..;
+
+  new-files:
+    desc: show all new files not available on checksum of par
+    vars:
+      DIRS:
+        sh: find . -maxdepth 1 \( ! -name '.*' ! -name '_*' \) -type d
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - for: { var: DIRS, split: "\n" }
+        cmd: cd "{{.ITEM}}"; task -g par2:new-files; cd ..;
+
+        
+    

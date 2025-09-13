@@ -1,0 +1,22 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - echo "List of wine program"
+    summary: |
+      Examples,
+
+      - wine:multipar
+    silent: true
+
+  multipar:
+    vars:
+      USER:
+        sh: whoami
+    desc: "Run Multipart programs from Wine folder"
+    dir: .wine/drive_c/users/{{.USER}}/Program/MultiPar1334/
+    cmds:
+      - wine MultiPar.exe

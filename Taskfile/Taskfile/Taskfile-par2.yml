@@ -1,0 +1,82 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  USENET_BLOCK_SIZE: 307200
+
+tasks:
+  default:
+    cmds:
+      - echo "Par2 (Par2cmdline-turbo) simplify, use -l, -a, --list or --list-all to show all available commands. Use --summary for examples."
+    summary: |
+      Par2 using Par2cmdline-turbo for all files in current directory
+      ref: https://github.com/animetosho/par2cmdline-turbo
+
+      Default for Create:   
+        - create checksum {dirname}.par2.sfv
+        - `-R` recursively
+        - `-r15` for 15% recovery
+        - outout as {dirname}.par2
+
+      Installation: include binary par2cmdline-turbo file path in bashrc
+
+      Example:
+      $ task par2:create
+      $ task par2:create-s300kb or task par2:create-usenet
+      $ task par2:create-s2mb
+      $ task par2:check or task par2:verify
+      $ task par2:restore
+
+      
+      create with block size of 300kb (usenet)
+      $ task par2:create -- --s307200
+    silent: true
+
+  create:
+    desc: create [folder].par + svf for all files in this directory recursively
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - ( rm *.par2 2> /dev/null || true) && ( rm *.par2.sfv 2> /dev/null || true )
+      - rhash -rP --sha256 -o "${PWD##*/}.par2.sfv" .
+      - par2 c -R -r15 {{.CLI_ARGS}} "${PWD##*/}" .
+
+  create-s300kb:
+    aliases: [create-usenet]
+    desc: create [folder].par for all files in this directory recursively, with blocksize 300KB
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - ( rm *.par2 2> /dev/null || true) && ( rm *.par2.sfv 2> /dev/null || true )
+      - rhash -rP --sha256 -o "${PWD##*/}.par2.sfv" .
+      - par2 c -R -r15 -s{{USENET_BLOCK_SIZE}} "${PWD##*/}" .
+
+  create-s2mb:    
+    desc: create [folder].par for all files in this directory recursively, with blocksize 2MB
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - ( rm *.par2 2> /dev/null || true) && ( rm *.par2.sfv 2> /dev/null || true )
+      - rhash -rP --sha256 -o "${PWD##*/}.par2.sfv" .
+      - par2 c -R -r15 -s2048000 "${PWD##*/}" .
+
+  check:
+    aliases: [verify]
+    desc: verify par2 file for current directory, using filename for "{dirname}.par2"
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - cmd: rhash -cP "${PWD##*/}.par2.sfv"
+        ignore_error: true
+      - cmd: par2 v "${PWD##*/}.par2" . | grep "Repair\|missing\|no\ data\ found" 
+        ignore_error: true
+
+  repair:
+    desc: repair par2 file for current directory, using filename for "{dirname}.par2"
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - par2 r "${PWD##*/}.par2" .
+
+  new-files:
+    desc: show all new files not available on checksum of par
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
+      - cmd: rhash --recursive --exclude=".par2" --unverified="${PWD##*/}.par2.sfv" .      
+        ignore_error: true
