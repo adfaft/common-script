@@ -63,8 +63,8 @@ tasks:
     desc: verify par2 file for current directory, using filename for "{dirname}.par2"
     dir: '{{.USER_WORKING_DIR}}'
     cmds:
-      - cmd: rhash -cP "${PWD##*/}.par2.sfv"
-        ignore_error: true
+      # - cmd: rhash -cP "${PWD##*/}.par2.sfv"
+      #   ignore_error: true
       - cmd: par2 v "${PWD##*/}.par2" . | grep "Repair\|missing\|no\ data\ found" 
         ignore_error: true
 
