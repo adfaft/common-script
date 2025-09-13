@@ -5,6 +5,9 @@ version: '3'
 includes:
   rhash: ./Taskfile/Taskfile-rhash.yml
   rhash-dirs: ./Taskfile/Taskfile-rhash-dirs_{{OS}}.yml
+  par2: ./Taskfile/Taskfile-par2.yml
+  par2-dirs: ./Taskfile/Taskfile-par2-dirs_{{OS}}.yml
+  wine: ./Taskfile/Taskfile-wine.yml
 
 tasks:
   default:

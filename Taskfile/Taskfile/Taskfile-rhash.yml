@@ -36,6 +36,13 @@ tasks:
     desc: verify checksum based on file "{{.FILENAME}}"
     dir: '{{.USER_WORKING_DIR}}'
     cmds:
+      - rhash -rcP "{{.FILENAME}}"
+
+  check-exclude-missing:
+    aliases: [verify-exclude-missing]
+    desc: verify checksum based on file "{{.FILENAME}}" (exclude missing)
+    dir: '{{.USER_WORKING_DIR}}'
+    cmds:
       - rhash -rcP --ignore-missing "{{.FILENAME}}"
 
   update:

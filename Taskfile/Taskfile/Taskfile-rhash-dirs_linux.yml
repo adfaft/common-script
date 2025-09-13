@@ -8,7 +8,7 @@ vars:
 tasks:
   default:
     vars: 
-      GREETING: "RHASH EACH Directories in current directory with looping"
+      GREETING: "RHASH EACH Directories (1 level) in current directory with looping"
     desc: "{{.GREETING}}"
     cmds:
       - echo "{{.GREETING}}"
@@ -21,7 +21,7 @@ tasks:
         # for windows, can be 
         # for /d %%d in (.) do @if not "%%~nd"=="" if not "%%~nd"=="_*" if not "%%~nd"=="." if not "%%~nd"==".." echo %%d
       FILENAME: '{{.FILENAME}}'
-    desc: create "{{.FILENAME}}" file using SHA256 for all accepted extensions. Excluding prefix "." / "_"    
+    desc: for each directory (1 level), create "{{.FILENAME}}" file using SHA256 for all accepted extensions. Excluding prefix "." / "_"    
     summary: |
       RHash all files in for EACH FOLDERS in current directory recursively, default as 
         - SHA256 algorithm 
